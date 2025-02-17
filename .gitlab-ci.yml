@@ -1,0 +1,18 @@
+image: docker:latest
+
+stages:
+  - deploy
+
+PROD JOB:
+  stage: deploy
+  only:
+    - prod
+  tags:
+    - prod
+  before_script:
+    - docker system prune -f
+  script:
+    - docker compose up -d --build
+  after_script:
+    - docker system df
+    - docker ps

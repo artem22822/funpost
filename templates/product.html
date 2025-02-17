@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+
+
+{% endblock %}
+
+{% block content %}
+    <style>
+        .carousel-img {
+            height: auto;
+        }
+
+        @media (min-width: 768px) {
+            .carousel-img {
+                height: 500px;
+                object-fit: scale-down;
+            }
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+        }
+
+        video:playing + .play-button {
+            display: none;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+    </style>
+    <div class="container mt-5">
+        <a href="{% url 'profile' user_product.username %}" style="text-decoration: none">
+            <h3>
+                <i class="fas fa-user" style="margin-right: 8px;"></i>
+                {{ user_product.username|capfirst }}
+            </h3>
+        </a>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <div id="productCarousel" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    {% for url, media_type in product.media_items %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                            {% if media_type == 'image' %}
+                                                <img src="{{ url }}" class="d-block w-100 carousel-img"
+                                                     alt="{{ product.name }}">
+                                            {% elif media_type == 'video' %}
+                                                <div class="video-container">
+                                                    <video id="video-{{ forloop.counter }}" autoplay loop muted
+                                                           playsinline
+                                                           class="d-block w-100 carousel-img">
+                                                        <source src="{{ url }}" type="video/mp4">
+                                                        Unsupported media type
+                                                    </video>
+                                                </div>
+                                            {% else %}
+                                                <p>Unsupported media type</p>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+                                <a class="carousel-control-prev" href="#productCarousel" role="button"
+                                   data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#productCarousel" role="button"
+                                   data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-12 d-flex flex-column align-items-center">
+                            <div class="card-body text-center">
+                                <h1 class="card-title">{{ product.name }}</h1>
+                                <p class="card-text">{{ product.description|safe }}</p>
+                                <h3>Price: ${{ product.price }}</h3>
+                                <p>{% if product.count > 0 %}Available: {{ product.count }}{% else %}Sold
+                                    Out {% endif %}</p>
+                                {% if user.is_authenticated %}
+                                    {% if product.count > 0 %}
+                                        <button href="#" class="add-btn btn btn-primary"
+                                                data-product-id="{{ product.id }}">
+                                            ADD TO CART
+                                        </button>
+                                    {% else %}
+                                        <button href="#" class="add-btn btn btn-secondary"
+                                                data-product-id="{{ product.id }}"
+                                                disabled style="color: red; font-weight: bold">
+                                            SOLD OUT
+                                        </button>
+                                    {% endif %}
+                                {% else %}
+                                    <a href="{% url 'login' %}?next={{ request.path }}">
+                                        <button class="btn-redirect">
+                                            Login to gain access
+                                        </button>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="{% static "js/scripts.js" %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addButtons = document.querySelectorAll('.add-btn');
+
+            // Product in cart
+            fetch('/api/product-cart', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(cartItems => {
+
+                    const cartProductIds = cartItems.map(item => item.product_id);
+
+                    addButtons.forEach(btn => {
+                        const productId = parseInt(btn.getAttribute('data-product-id'));
+
+                        if (cartProductIds.includes(productId)) {
+                            btn.textContent = 'In cart';
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-success');
+                            btn.disabled = true;
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching cart items:', error);
+                });
+
+            // click add button
+            addButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    event.preventDefault();
+                    const productId = btn.getAttribute('data-product-id');
+
+                    fetch('/api/add-to-cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            'product_id': productId
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            //console.log(data['message'], 'daata')
+                            //console.log(data['order_uuid'], 'orderUuId')
+                            const orderUuId = data['order_uuid']
+                            if (data['message'] === 'new_product') {
+                                // Update count cart and orderUuId
+                                updateCartCount();
+                                if (orderUuId) {
+                                    $('#buy-link').attr('href', '{% url "process-order" 0 %}'.replace('0', orderUuId));
+                                }
+                                btn.textContent = 'In cart';
+                                btn.classList.remove('btn-primary');
+                                btn.classList.add('btn-success');
+                                btn.disabled = true;
+                                // Show toastr notifi
+                                toastr.success('Product has been added to the cart');
+
+                            }
+
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+
+            function updateCartCount() {
+                const badgeCountElement = document.querySelector('.badge-count');
+                const currentCount = parseInt(badgeCountElement.textContent.trim());
+                badgeCountElement.textContent = currentCount + 1;
+            }
+
+
+        });
+    </script>
+    <script>
+        toastr.options = {
+            preventDuplicates: true,
+            timeOut: 6000,
+            progressBar: true,
+        }
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.info('{{ message }}')
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

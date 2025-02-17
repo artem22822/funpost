@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper bg-white mt-sm-5">
+        <h4 class="pb-4 border-bottom">Account settings</h4>
+        <div class="link-settings">
+            <a href="{% url "profile-address" %}">Address</a>
+        </div>
+        <div class="wrapper2 bg-white mt-sm-3">
+            <div class="wrapper2-name border-bottom">
+                <h4>General</h4>
+                <small class="">Useful links and settings.</small>
+            </div>
+            <button>Dark Mode</button>
+            <button>Support</button>
+            <button>Terms</button>
+        </div>
+
+        <div class="wrapper2 bg-white mt-sm-3">
+            <div class="wrapper2-name border-bottom">
+                <h4>Account Settings</h4>
+                <small class="">Manage your account settings.</small>
+            </div>
+            <button>Switch To Creator Account</button>
+            <button>Change Email</button>
+            <button>Delete Account</button>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+    <style>
+        .carousel-item img {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .carousel-item video {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        /*style buttons edit*/
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-delete {
+            background-color: #8c4949;
+            color: white;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .btn-delete:hover {
+            background-color: #a11818;
+            color: black;
+        }
+
+        .btn-edit {
+            background-color: #b6b6a9;
+            color: black;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .btn-edit:hover {
+            background-color: #949452;
+            color: white;
+        }
+
+        .add-btn {
+            border: none;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .add-btn:hover {
+            opacity: 0.8;
+        }
+
+        .share-btn {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <div id="block-products" class="products">
+        <h2>{{ username }} products →</h2>
+        <div class="product-list">
+            {% for product in products %}
+                <div class="product-item">
+                    {% if request.user.username == username %}
+                        <div class="button-container">
+                            <button class="btn btn-delete" onclick="confirmDelete({{ product.id }})">
+                                Delete
+                            </button>
+                            <a class="btn btn-edit" href="{% url 'edit-product' product.uuid %}">Edit</a>
+                        </div>
+                    {% endif %}
+                    <div class="product-image">
+                        <a href="{% url 'page-product' product.user.username product.uuid %}">
+                            <div id="carousel-{{ product.id }}" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    {% for url, media_type in product.media_items %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                            {% if media_type == 'image' %}
+                                                <img src="{{ url }}" class="d-block w-100" alt="{{ product.name }}">
+                                            {% elif media_type == 'video' %}
+                                                <video class="d-block w-100" autoplay loop muted playsinline>
+                                                    <source src="{{ url }}" type="video/mp4">
+                                                    Unsupported media type
+                                                </video>
+                                            {% else %}
+                                                <p>Unsupported media type</p>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="carousel-control-prev" href="#carousel-{{ product.id }}" role="button"
+                                   data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carousel-{{ product.id }}" role="button"
+                                   data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="product-details">
+                        <h3>{{ product.name }}</h3>
+                        <p><strong>{{ product.price }}</strong> $</p>
+                        <p class="available" data-product-id="{{ product.id }}">
+                            {% if product.count > 0 %}Available: {{ product.count }}{% else %}Sold Out{% endif %}
+                        </p>
+                        <p>{{ product.description|safe }}</p>
+                        {% if user.is_authenticated %}
+                            {% if product.count > 0 %}
+                                <div id="copy-message-{{ product.uuid }}" class="mt-3 alert alert-success"
+                                     style="display: none; z-index: 100;">
+                                    Product link copied!
+                                </div>
+                                <button id="share-{{ product.uuid }}" class="share-btn btn btn-light"
+                                        onclick="shareProduct('{{ product.uuid }}', '{{ product.user.username }}')">
+                                    Share <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="add-btn btn btn-primary" data-product-id="{{ product.id }}">+ ADD
+                                </button>
+                            {% else %}
+                                <button class="add-btn btn btn-secondary" data-product-id="{{ product.id }}" disabled
+                                        style="color:red; font-weight: bold">
+                                    SOLD OUT
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <div id="copy-message-{{ product.uuid }}" class="mt-3 alert alert-success"
+                                 style="display: none; z-index: 100;">
+                                Product link copied!
+                            </div>
+                            <button id="share-{{ product.uuid }}" class="share-btn btn btn-light"
+                                    onclick="shareProduct('{{ product.uuid }}', '{{ product.user.username }}')">
+                                Share <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="add-btn btn btn-primary"
+                                    onclick="window.location.href='{% url 'login' %}?next={{ request.path }}'">+
+                                ADD
+                            </button>
+
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="{% static "js/scripts.js" %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addButtons = document.querySelectorAll('.add-btn');
+
+            // Product in cart
+            fetch('/api/product-cart', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(cartItems => {
+
+                    const cartProductIds = cartItems.map(item => item.product_id);
+
+                    addButtons.forEach(btn => {
+                        const productId = parseInt(btn.getAttribute('data-product-id'));
+
+                        if (cartProductIds.includes(productId)) {
+                            btn.textContent = 'In cart';
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-success');
+                            btn.disabled = true;
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching cart items:', error);
+                });
+
+            // click add button
+            addButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    event.preventDefault();
+                    const productId = btn.getAttribute('data-product-id');
+
+                    fetch('/api/add-to-cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            'product_id': productId
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const orderUuId = data['order_uuid']
+                            const by_link = document.getElementById('buy-link')
+
+                            if (data['message'] === 'new_product') {
+                                // Update count cart and orderUuId
+                                if (orderUuId) {
+                                    var process_link = '{% url "process-order" 0 %}'.replace('0', orderUuId);
+                                    by_link.href = process_link
+                                }
+                                updateCartCount();
+
+                                btn.textContent = 'In cart';
+                                btn.classList.remove('btn-primary');
+                                btn.classList.add('btn-success');
+                                btn.disabled = true;
+                                // Show toastr notifi
+                                toastr.success('Product has been added to the cart');
+
+                            }
+
+
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+
+            function updateCartCount() {
+                const badgeCountElement = document.querySelector('.badge-count');
+                const currentCount = parseInt(badgeCountElement.textContent.trim());
+                badgeCountElement.textContent = currentCount + 1;
+            }
+
+
+        });
+    </script>
+    <script>
+        function confirmDelete(productId) {
+            const userConfirm = confirm('Delete?')
+            if (userConfirm) {
+                window.location.href = `/delete/${productId}`
+            }
+        }
+    </script>
+    <script>
+        toastr.options = {
+            preventDuplicates: true,
+            timeOut: 10000,
+            progressBar: true,
+        }
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}')
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+    <title>Create Product</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3/minified/themes/default.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sceditor@3/minified/sceditor.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <style>
+        .photo-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ddd;
+            margin: 10px;
+            position: relative;
+        }
+
+        .photo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-upload video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-upload input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .photo-upload .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .photo-upload .delete-button:hover {
+            background-color: darkred;
+        }
+
+        .photo-upload.placeholder {
+            font-size: 48px;
+            color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sortable-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+    <style>
+        .photo-upload .loading-spinner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #007bff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>ADD PRODUCT</h1>
+        <form id="product-form" method="post" enctype="multipart/form-data" action="{% url 'add-product' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"
+                          style="height: 250px"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="count" class="form-label">Count</label>
+                <input type="number" class="form-control" id="count" name="count" value="1" min="1" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Photos/Videos</label>
+                <div id="photo-container" class="sortable-container">
+                    <div class="photo-upload placeholder">
+                        <span>1</span>
+                        <input type="file" accept="image/*, video/*" name="photo1" onchange="addPhoto(event, 1)"
+                               required>
+                    </div>
+                    <div class="photo-upload placeholder">
+                        <span>2</span>
+                        <input type="file" accept="image/*, video/*" name="photo2" onchange="addPhoto(event, 2)">
+                    </div>
+                    <div class="photo-upload placeholder">
+                        <span>3</span>
+                        <input type="file" accept="image/*, video/*" name="photo3" onchange="addPhoto(event, 3)">
+                    </div>
+                    <div class="photo-upload placeholder">
+                        <span>4</span>
+                        <input type="file" accept="image/*, video/*" name="photo4" onchange="addPhoto(event, 4)">
+                    </div>
+                    <div class="photo-upload placeholder">
+                        <span>5</span>
+                        <input type="file" accept="image/*, video/*" name="photo5" onchange="addPhoto(event, 5)">
+                    </div>
+                    <div class="photo-upload placeholder">
+                        <span>6</span>
+                        <input type="file" accept="image/*, video/*" name="photo6" onchange="addPhoto(event, 6)">
+                    </div>
+                </div>
+            </div>
+            <button id="save-button" type="submit" class="btn btn-primary">Save</button>
+
+            <!-- Loader -->
+            <button id="loading-button" class="btn btn-primary" type="button" style="display: none;">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script>
+        document.getElementById('product-form').addEventListener('submit', function (event) {
+            // show loader "Save"
+            document.getElementById('save-button').style.display = 'none';
+            document.getElementById('loading-button').style.display = 'block';
+
+            // disabled "Save"
+            event.target.querySelector('button[type="submit"]').disabled = true;
+        });
+
+        function getFileType(file) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'wepb'].includes(extension)) {
+                return 'image';
+            }
+            if (['mp4', 'webm', 'ogg', 'mov'].includes(extension)) {
+                return 'video';
+            }
+            return 'unknown';
+        }
+
+        function getVideoThumbnail(file, callback) {
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.src = URL.createObjectURL(file);
+
+            video.addEventListener('loadedmetadata', function () {
+                // Set canvas size based on video size
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+
+                // Seek to 1 second to get a thumbnail
+                video.currentTime = 1;
+
+                video.addEventListener('seeked', function () {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const dataURL = canvas.toDataURL('image/png');
+                    callback(dataURL);
+                    URL.revokeObjectURL(video.src); // Clean up
+                });
+            });
+        }
+
+
+        function addPhoto(event, index) {
+            const input = event.target;
+            const file = input.files[0];
+            const photoUpload = input.closest('.photo-upload');
+            const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+
+            if (file && file.size > MAX_FILE_SIZE) {
+                alert("Error: File size exceeds 50 MB.");
+                input.value = ''; // clean
+                return;
+            }
+
+            let loadingSpinner = document.createElement('div');
+            loadingSpinner.classList.add('loading-spinner');
+            photoUpload.appendChild(loadingSpinner);
+
+            if (!file) {
+                alert("Error: File not selected.");
+                photoUpload.removeChild(loadingSpinner);
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                photoUpload.removeChild(loadingSpinner);
+
+                const existingImg = photoUpload.querySelector('img');
+                const existingVideo = photoUpload.querySelector('video');
+
+                // Remove existing image or video if any
+                if (existingImg) {
+                    photoUpload.removeChild(existingImg);
+                }
+                if (existingVideo) {
+                    photoUpload.removeChild(existingVideo);
+                }
+
+                const fileType = file.type || getFileType(file);
+
+                if (fileType.startsWith('video/') || fileType === 'video') {
+                    // Handle video thumbnail
+                    getVideoThumbnail(file, function (thumbnailDataURL) {
+                        const img = document.createElement('img');
+                        img.src = thumbnailDataURL;
+                        img.alt = 'Video Thumbnail';
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '100%';
+                        photoUpload.appendChild(img);
+                    }, function (error) {
+                        alert("Error creating video thumbnail.");
+                        console.error(error);
+                    });
+                } else if (fileType.startsWith('image/') || fileType === 'image') {
+                    // Handle image
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Photo';
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    photoUpload.appendChild(img);
+                } else {
+                    alert("Error: Unsupported file type.");
+                    return;
+                }
+
+                // Add delete button if not already added
+                let deleteButton = photoUpload.querySelector('.delete-button');
+                if (!deleteButton) {
+                    deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.innerHTML = '×';
+                    deleteButton.onclick = function () {
+                        removePhoto(photoUpload);
+                    };
+                    photoUpload.appendChild(deleteButton);
+                }
+
+                photoUpload.classList.remove('placeholder');
+            };
+
+            reader.onerror = function () {
+                alert("Error loading file.");
+                photoUpload.removeChild(loadingSpinner);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removePhoto(photoUpload) {
+            const input = photoUpload.querySelector('input[type="file"]');
+            input.value = ''; // Reset file input
+            const img = photoUpload.querySelector('img');
+            if (img) {
+                photoUpload.removeChild(img);
+            }
+            // Remove delete button
+            const deleteButton = photoUpload.querySelector('.delete-button');
+            if (deleteButton) {
+                photoUpload.removeChild(deleteButton);
+            }
+            photoUpload.classList.add('placeholder');
+        }
+
+        // Initialize SCEditor
+        var textarea = document.getElementById('description');
+        sceditor.create(textarea, {
+            format: 'bbcode',
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@3/minified/themes/content/default.min.css'
+        });
+
+        // Initialize SortableJS
+        const sortable = new Sortable(document.getElementById('photo-container'), {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: function (/**Event*/evt) {
+                const items = evt.to.children;
+                for (let i = 0; i < items.length; i++) {
+                    const span = items[i].querySelector('span');
+                    if (span) {
+                        span.textContent = i + 1;
+                    }
+                    const input = items[i].querySelector('input[type="file"]');
+                    if (input) {
+                        input.name = `photo${i + 1}`;
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        toastr.options = {
+            preventDuplicates: true,
+            timeOut: 10000,
+            progressBar: true,
+        }
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}');
+                {% elif message.tags == 'error' %}
+                    toastr.error('{{ message }}');
+                {% elif message.tags == 'warning' %}
+                    toastr.warning('{{ message }}');
+                {% elif message.tags == 'info' %}
+                    toastr.info('{{ message }}');
+                {% else %}
+                    toastr.info('{{ message }}');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}

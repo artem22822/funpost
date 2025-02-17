@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block section %}
+    <div class="content-wrapper">
+
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Tables</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Agency</h3>
+                                <div class="card-tools">
+
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>UUID</th>
+                                        <th>Title</th>
+                                        <th>Active</th>
+                                        <th>Created_at</th>
+                                        <th>Authuser</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    <tr>
+                                        <td>{{ agency.uuid }}</td>
+                                        <td>{{ agency.title }}</td>
+                                        <td>{{ agency.active }}</td>
+                                        <td>{{ agency.create_at }}</td>
+                                        <td>{{ agency.authuser }}</td>
+
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Creators</h3>
+                                <div class="card-tools">
+
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>UUID</th>
+                                        <th>Slug</th>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Agency</th>
+                                        <th>Created_at</th>
+                                        <th>Authuser</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for creator in creators %}
+                                        <tr>
+                                            <td>{{ creator.uuid }}</td>
+                                            <td>{{ creator.slug }}</td>
+                                            <td>{{ creator.name }}</td>
+                                            <td>{{ creator.address }}</td>
+                                            <td>{{ creator.agency }}</td>
+                                            <td>{{ creator.created_at }}</td>
+                                            <td>{{ creator.authuser }}</td>
+                                            <td>
+                                                <button><a href="">Details</a>
+                                                </button>
+                                            </td>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+
+    </div>
+{% endblock %}

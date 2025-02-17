@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper bg-white mt-sm-5">
+        <h4 class="pb-4 border-bottom">Account settings</h4>
+        <div class="link-settings">
+            <a href="{% url "profile-address" %}">Address</a>
+        </div>
+        <div class="wrapper2 bg-white mt-sm-3">
+            <small>Throne Balance (USD)</small>
+            <div>
+                <h2 style="color: black">$0.00</h2>
+            </div>
+            <p>You can redeem your balance for gifts or withdraw it to your bank.
+                <a target="_blank" href="#">Read More.</a></p>
+        </div>
+        <div class="wrapper2 bg-white mt-sm-3">
+            <small>Account Status</small>
+            <div>
+                <h2 style="color: black">Not Connected</h2>
+            </div>
+            <p>Scroll to <b>Account Setup</b> to set up withdrawals.</p>
+        </div>
+        <div class="wrapper2 bg-white mt-sm-3">
+            <small>Balance Transactions</small>
+            <p>No balance transactions yet</p>
+        </div>
+        <div class="wrapper2 bg-white mt-sm-3">
+            <small>Withdrawals</small>
+            <div class="col-lg-6 mb-4">
+
+                <p>
+                    Withdrawal Speed
+                    Funds will be transferred to your Stripe account on the scheduled date, after that Stripe
+                    automatically pays out the money to your bank account within 24 hours. Depending on your bank,
+                    it might take an extra few days for the funds to become available.
+                </p>
+
+            </div>
+
+            <p>No withdrawals yet</p>
+        </div>
+
+
+    </div>
+{% endblock %}

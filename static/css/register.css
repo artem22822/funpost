@@ -1,0 +1,208 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to the top */
+    height: 100vh;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in width and height */
+    margin-top: 20px; /* Add some margin to the top */
+}
+
+.login-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.social-google {
+    margin-top: 10px;
+    width: 100%;
+    color: #FFFFFF;
+    background: #e14758;
+}
+.social-twitter {
+    margin-top: 10px;
+    width: 100%;
+    color: #FFFFFF;
+    background: #2c9faf;
+}
+
+.logo {
+    width: 200px;
+    margin-bottom: 25px;
+}
+
+h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+p {
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+a {
+    color: #6200ea;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+form {
+    width: 100%;
+}
+
+input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Add this to ensure padding doesn't affect width */
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    margin: 10px 0;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.login-google {
+    width: 100%;
+    padding: 10px;
+    background-color: #c75772;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.login-twitter {
+    width: 100%;
+    padding: 10px;
+    background-color: #4d6dd7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-twitter:hover {
+    background-color: #2e55d9;
+}
+.login-google:hover {
+    background-color: #a83853;
+}
+
+.login-button:hover {
+    background-color: #3700b3;
+}
+
+label.chakra-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.chakra-checkbox__input {
+    border: 0px;
+    clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: absolute;
+}
+
+.chakra-checkbox__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #6200ea;
+    border-radius: 4px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.chakra-checkbox__control[data-checked=""] {
+    background-color: #6200ea;
+}
+
+.chakra-checkbox__control[data-checked=""] svg {
+    display: block;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.2s ease;
+}
+
+.chakra-checkbox__control svg {
+    width: 12px;
+    height: 10px;
+    stroke: white;
+    stroke-dashoffset: 16;
+    transition: stroke-dashoffset 0.2s ease;
+}
+
+.chakra-checkbox__label {
+    font-size: 14px;
+    color: #333;
+}
+.custom-divider {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* login messages */
+
+.messages {
+    margin: 10px 0;
+}
+
+.messages .error {
+    color: red;
+    background-color: #f8d7da;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.messages .success {
+    color: green;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 5px;
+}

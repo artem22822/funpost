@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FanPost">
+    <title>FanPost</title>
+    <link rel="stylesheet" href="{% static 'fp/fonts/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'fp/styles/main.css' %}">
+    <link rel="stylesheet" href="{% static 'fp/js/glide/glide.core.min.css' %}">
+    <script src="{% static 'fp/js/glide/glide.min.js' %}" defer></script>
+    <script src="{% static 'fp/js/main.js' %}" defer></script>
+
+    <link type="image/x-icon" rel="shortcut icon" href="{% static 'fp/favicons/favicon.ico' %}">
+    <link type="image/png" sizes="16x16" rel="icon" href="{% static 'fp/favicons/favicon-16x16.png' %}">
+    <link type="image/png" sizes="32x32" rel="icon" href="{% static 'fp/favicons/favicon-32x32.png' %}">
+    <link type="image/png" sizes="96x96" rel="icon" href="{% static 'fp/favicons/favicon-96x96.png' %}">
+    <link type="image/png" sizes="120x120" rel="icon" href="{% static 'fp/favicons/favicon-120x120.png' %}">
+    <link type="image/png" sizes="72x72" rel="icon" href="{% static 'fp/favicons/android-icon-72x72.png' %}">
+    <link type="image/png" sizes="96x96" rel="icon" href="{% static 'fp/favicons/android-icon-96x96.png' %}">
+    <link type="image/png" sizes="144x144" rel="icon" href="{% static 'fp/favicons/android-icon-144x144.png' %}">
+    <link type="image/png" sizes="192x192" rel="icon" href="{% static 'fp/favicons/android-icon-192x192.png' %}">
+    <link type="image/png" sizes="512x512" rel="icon" href="{% static 'fp/favicons/android-icon-512x512.png' %}">
+    {#    <link rel="manifest" href="{% static 'fp/favicons/manifest.json' %}">#}
+    <link sizes="57x57" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-57x57.png' %}">
+    <link sizes="60x60" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-60x60.png' %}">
+    <link sizes="72x72" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-72x72.png' %}">
+    <link sizes="76x76" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-76x76.png' %}">
+    <link sizes="114x114" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-114x114.png' %}">
+    <link sizes="120x120" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-120x120.png' %}">
+    <link sizes="144x144" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-144x144.png' %}">
+    <link sizes="152x152" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-152x152.png' %}">
+    <link sizes="180x180" rel="apple-touch-icon" href="{% static 'fp/favicons/apple-touch-icon-180x180.png' %}">
+    <link color="#e52037" rel="mask-icon" href="{% static 'fp/favicons/safari-pinned-tab.svg' %}">
+    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="msapplication-TileImage" content="{% static 'fp/favicons/mstile-144x144.png' %}">
+    <meta name="msapplication-square70x70logo" content="{% static 'fp/favicons/mstile-70x70.png' %}">
+    <meta name="msapplication-square150x150logo" content="{% static 'fp/favicons/mstile-150x150.png' %}">
+    <meta name="msapplication-wide310x150logo" content="{% static 'fp/favicons/mstile-310x310.png' %}">
+    <meta name="msapplication-square310x310logo" content="{% static 'fp/favicons/mstile-310x150.png' %}">
+    <meta name="application-name" content="FanPost.club">
+    <meta name="msapplication-config" content="{% static 'fp/favicons/browserconfig.xml' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+</head>
+<body>
+<div class="page">
+    <section class="homescreen">
+        <div class="container">
+            <div class="homescreen__content">
+                <div class="homescreen__top">
+                    <a href="#" class="homescreen__logo" aria-label="Logo"><img
+                            src="{% static 'fp/images/logo-1.svg' %}" alt="FunPost"></a>
+                </div>
+                <div class="homescreen__center">
+                    <div class="homescreen__text"><small>Increase your agency's income</small></div>
+                    <h1 class="homescreen__title">Sell and deliver fetish<br> items safely to your fans worldwide.</h1>
+                    <div class="homescreen__text">Fanpost is the marketplace where you can sell any items to fans. We
+                        provide safe, quick and affordable delivery options
+                    </div>
+                    <ul class="homescreen__buttons">
+                        <li><a href="{% url 'login' %}" class="button-1">Sign In</a></li>
+                        <li><a href="{% url 'signup' %}" class="button-2">Register Now</a></li>
+                    </ul>
+                </div>
+                <div class="homescreen__scroll">Scroll down <i
+                        class="icon icon_24x24 icon_block icon_gray-arrow-down-1"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how">
+        <div class="container">
+            <div class="how__content">
+                <h2>How it works<br> At FanPost we save you time and energy</h2>
+                <div class="how__items">
+                    <div class="how__item">
+                        <div class="how__item-content"><i class="icon icon_steps-6"></i>
+                            List your product Enter the size, weight and price
+                        </div>
+                    </div>
+                    <div class="how__item">
+                        <div class="how__item-content"><i class="icon icon_steps-3"></i>
+                            Cost Calculation on our side We forecast shipping costs for clients worldwide
+                        </div>
+                    </div>
+                    <div class="how__item">
+                        <div class="how__item-content"><i class="icon icon_how-2"></i>
+                            Easy drop-off We deliver the gift to the receiver, ensuring safety for each side.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact">
+        <div class="container">
+            <div class="contact__content glide">
+                <div class="contact__left">
+                    <h2 class="contact__title">Deliver Smiles or Seek Answers</h2>
+                    <div class="contact__text">Here, you can make someone's day by sending gifts to your favorite
+                        creators or reach out to us with any questions or requests. Select an option below to get
+                        started.
+                    </div>
+                </div>
+                <div class="contact__form">
+                    <!--
+                    <ul class="contact__form-controls">
+                        <li><a href="#tab_delivery">Request a delivery</a></li>
+                        <li><a href="#tab_question">Ask us a question</a></li>
+                    </ul>
+                    -->
+                    <div class="contact__form-controls" data-glide-el="controls">
+                        {#							<button data-glide-dir="=0">Request a delivery</button>#}
+                        <button data-glide-dir="=1">Ask us a question</button>
+                    </div>
+                    <div class="glide__track" data-glide-el="track">
+                        <div class="contact__form-tabs glide__slides">
+
+
+                            <form action="{% url 'index' %}" method="POST" class="contact__form-tab glide__slide"
+                                  id="tab_question">
+                                {% csrf_token %}
+                                <div class="contact__form-text">Surprise your favorite creator with thoughtful gifts!
+                                    Fill out the form below to request a gift delivery. Our team will ensure safe and
+                                    prompt delivery to the chosen model
+                                </div>
+                                <div class="contact__form-inputs">
+                                    <div class="contact__form-input">
+                                        <label for="{{ form.name.id_for_label }}">Name</label>
+                                        <div class="input-1">
+                                            {#                                                <input type="text" name="name" id="name_ask" placeholder="Full name" required>#}
+                                            {{ form.name }}
+                                        </div>
+                                    </div>
+                                    <div class="contact__form-input">
+                                        <label for="{{ form.email.id_for_label }}">Email</label>
+                                        <div class="input-1">
+                                            {#                                                <input type="email" name="email" id="email_ask" placeholder="Email address" required>#}
+                                            {{ form.email }}
+                                        </div>
+                                    </div>
+                                    <div class="contact__form-input contact__form-input_wide">
+                                        <label for="{{ form.message.id_for_label }}">Message</label>
+                                        <div class="input-1">
+                                            {#                                                <textarea name="message" id="message_ask" placeholder="Tell us your details..." required></textarea>#}
+                                            {{ form.message }}
+                                        </div>
+                                    </div>
+                                    <div class="contact__form-input">
+                                        <button type="submit" class="button-1">Send</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__main">
+                    <div class="footer__left">
+                        <a href="#" class="footer__logo" aria-label="Logo"><img
+                                src="{% static 'fp/images/logo-1.svg' %}" alt="FunPost"></a>
+                    </div>
+                    <div class="footer__center">
+                        <ul class="footer__menu">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of use</a></li>
+                            <li><a href="#">Contacts</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="footer__copyright">Delivering since 2021</div>
+            </div>
+        </div>
+    </footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+<script>
+    toastr.options = {
+        preventDuplicates: true,
+        timeOut: 6000,
+        progressBar: true,
+    }
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                toastr.info('{{ message }}')
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+</body>
+</html>

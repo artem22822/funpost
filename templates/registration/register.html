@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FanPost</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+<div class="login-container">
+    <div class="login-box">
+        <img src="{% static "fp/images/logo-1.svg" %}" alt="Logo" class="logo">
+        <h2>Welcome back!</h2>
+        <p>Already have an account? <a href="{% url 'login' %}?next={{ request.GET.next }}">Sign in</a></p>
+        <a class="social-google" href="{% url "social:begin" "google-oauth2" %}?next={{ request.GET.next }}">
+            <button class="login-google">Sign up with Google</button>
+        </a>
+        <a class="social-twitter" href="{% url "social:begin" "twitter" %}?next={{ request.GET.next }}">
+            <button class="login-twitter">Sign up with Twitter</button>
+        </a>
+        <div class="custom-divider">
+            <hr aria-orientation="horizontal" class="custom-divider">
+            <p class="custom-text">or</p>
+            <hr aria-orientation="horizontal" class="custom-divider">
+        </div>
+         <!-- Errors Forms -->
+            {% if form.errors %}
+                <div class="messages">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password1" placeholder="Password" required>
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+{#            <div class="col-8">#}
+{#                <div class="icheck-primary">#}
+{#                    <input type="checkbox" id="agreeTerms" name="terms" value="agree" required>#}
+{#                    <label for="agreeTerms">#}
+{#                        I agree to the <a href="#">terms</a>#}
+{#                    </label>#}
+{#                </div>#}
+{#            </div>#}
+{#            <a href="#" class="forgot-password">Forgot Password?</a>#}
+            <button type="submit" class="login-button">Sing Up</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

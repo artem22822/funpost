@@ -1,0 +1,210 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+
+{% block section %}
+    <div class="content-wrapper">
+
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Tables</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Creator</h3>
+                                <div class="card-tools">
+
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>UUID</th>
+                                        <th>Slug</th>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Agency</th>
+                                        <th>Created_at</th>
+                                        <th>Authuser</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    <tr>
+                                        <td>{{ creator.uuid }}</td>
+                                        <td>{{ creator.slug }}</td>
+                                        <td>{{ creator.name }}</td>
+                                        <td>{{ creator.address }}</td>
+                                        <td>{{ creator.agency }}</td>
+                                        <td>{{ creator.created_at }}</td>
+                                        <td>{{ creator.authuser }}</td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Packages -->
+                {#                <div class="row">#}
+                {#                    <div class="col-12">#}
+                {#                        <div class="card">#}
+                {#                            <div class="card-header">#}
+                {#                                <h3 class="card-title">Packages</h3>#}
+                {#                                <div class="card-tools">#}
+                {#                                    <div class="input-group input-group-sm" style="width: 150px;">#}
+                {#                                        <input type="text" name="table_search" class="form-control float-right"#}
+                {#                                               placeholder="Search">#}
+                {#                                        <div class="input-group-append">#}
+                {#                                            <button type="submit" class="btn btn-default">#}
+                {#                                                <i class="fas fa-search"></i>#}
+                {#                                            </button>#}
+                {#                                        </div>#}
+                {#                                    </div>#}
+                {#                                </div>#}
+                {#                            </div>#}
+                {##}
+                {#                            <div class="card-body table-responsive p-0">#}
+                {#                                <table class="table table-hover text-nowrap">#}
+                {#                                    <thead>#}
+                {#                                    <tr>#}
+                {#                                        <th>UUID</th>#}
+                {#                                        <th>title</th>#}
+                {#                                        <th>model</th>#}
+                {#                                        <th>created_at</th>#}
+                {#                                        <th>status</th>#}
+                {#                                        <th>delivered_at</th>#}
+                {#                                        <th>delivery_service</th>#}
+                {#                                        <th>external_id</th>#}
+                {#                                        <th>address_from</th>#}
+                {#                                        <th>address_to</th>#}
+                {#                                        <th>address_through</th>#}
+                {#                                        <th>weight</th>#}
+                {#                                    </tr>#}
+                {#                                    </thead>#}
+                {#                                    <tbody>#}
+                {##}
+                {#                                    {% for packeg in packages %}#}
+                {#                                        <tr>#}
+                {#                                            <td>{{ packeg.uuid }}</td>#}
+                {#                                            <td>{{ packeg.title }}</td>#}
+                {#                                            <td>{{ packeg.model }}</td>#}
+                {#                                            <td>{{ packeg.created_at }}</td>#}
+                {#                                            <td>{{ packeg.status }}</td>#}
+                {#                                            <td>{{ packeg.delivered_at }}</td>#}
+                {#                                            <td>{{ packeg.delivery_service }}</td>#}
+                {#                                            <td>{{ packeg.external_id }}</td>#}
+                {#                                            <td>{{ packeg.address_from }}</td>#}
+                {#                                            <td>{{ packeg.address_to }}</td>#}
+                {#                                            <td>{{ packeg.address_through }}</td>#}
+                {#                                            <td>{{ packeg.weight }}</td>#}
+                {#                                        </tr>#}
+                {#                                    {% endfor %}#}
+                {##}
+                {#                                    </tbody>#}
+                {#                                </table>#}
+                {#                            </div>#}
+                {##}
+                {#                        </div>#}
+                {##}
+                {#                    </div>#}
+                {#                </div>#}
+                <!-- Request Packages -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Requests Packages</h3>
+                                <div class="card-tools">
+
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>UUID</th>
+                                        <th>model</th>
+                                        <th>agency</th>
+                                        <th>package</th>
+                                        <th>status</th>
+                                        <th>decline_reason</th>
+                                        <th>comment</th>
+                                        <th>created_at</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for request in requests %}
+                                        <tr>
+                                            <td>{{ request.uuid }}</td>
+                                            <td>{{ request.model }}</td>
+                                            <td>{{ request.agency }}</td>
+                                            <td>{{ request.package }}</td>
+                                            <td>{{ request.get_status_display }}</td>
+                                            <td>{{ request.decline_reason }}</td>
+                                            <td>{{ request.comment }}</td>
+                                            <td>{{ request.created_at }}</td>
+                                            <td>
+                                                <button><a href="{% url 'creators:request' request.pk %}">Details</a>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                {#                                                <form method="get" action="{% url 'package:request' %}">#}
+                                                {#                                                    {% csrf_token %}#}
+                                                {#                                                    <button type="submit" name="accept" value="{{ request.uuid }}"#}
+                                                {#                                                            class="btn btn-success">Accept#}
+                                                {#                                                    </button>#}
+                                                {#                                                </form>#}
+                                                {#                                            </td>#}
+                                                {#                                            <td>#}
+                                                {#                                                <form method="get" action="{% url 'package:request' %}">#}
+                                                {#                                                    {% csrf_token %}#}
+                                                {#                                                    <button type="submit" name="reject" value="{{ request.uuid }}"#}
+                                                {#                                                            class="btn btn-danger">Reject#}
+                                                {#                                                    </button>#}
+                                                {#                                                </form>#}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                        </div>
+                        <button><a href="{% url 'creators:create' %}">Create Reauest</a></button>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+
+    </div>
+{% endblock %}

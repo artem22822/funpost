@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h1>My orders</h1>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                    {% for order in orders %}
+                        <div class="order mb-4">
+                            <h2>Order ID: {{ order.uuid }}</h2>
+                            <li class="list-group-item d-flex flex-wrap">
+                                {% for product in order.products.all %}
+                                    <div class="col-6 col-sm-6 col-md-3 col-lg-2 mb-3 text-center">
+                                        {% if product.media_items.0.1 == 'image' %}
+                                            <img src="{{ product.media_items.0.0 }}" alt="{{ product.name }}"
+                                                 class="img-thumbnail mr-3"
+                                                 style="width: 100px; height: 100px; object-fit: cover;">
+                                        {% elif product.media_items.0.1 == 'video' %}
+                                            <video autoplay loop muted playsinline class="img-thumbnail mr-3"
+                                                   style="width: 100px; height: 100px; object-fit: cover;">
+                                                <source src="{{ product.media_items.0.0 }}" type="video/mp4">
+                                            </video>
+                                        {% else %}
+                                            <p>Unsupported media type</p>
+                                        {% endif %}
+                                        <p class="mt-2" style="text-align: center;">
+                                            {{ product.name|slice:":9" }}{% if product.name|length > 9 %}...{% endif %}
+                                        </p>
+                                    </div>
+                                {% endfor %}
+                            </li>
+
+
+                            <p><strong>Total Cost:</strong> ${{ order.total_cost }}</p>
+                            <p><strong>Created At:</strong> {{ order.created_at|date:"d.m.Y H:i:s" }}</p>
+                            {% if order.get_status_display|capfirst == 'Paid' %}
+                                <p><strong>Status:</strong> {{ order.get_status_display|capfirst }} -
+                                    (Processing transfer)</p>
+                            {% else %}
+                                <p><strong>Status:</strong> {{ order.get_status_display|capfirst }}</p>
+                            {% endif %}
+                            <p><strong>Current location:</strong> {{ order.current_location|default:'In stock' }}</p>
+                            <hr>
+                        </div>
+                        {% if order.get_status_display == 'created' %}
+                            <div style="padding-bottom: 20px;">
+                                <a id="buy-link" href="{% url 'process-order' order.uuid %}">
+                                    <button class="buy-btn" id="buy-cart">Buy</button>
+                                </a>
+                            </div>
+                        {% elif order.get_status_display == 'processing' %}
+                            <div style="padding-bottom: 20px;">
+                                <a id="buy-link" href="{% url 'checkout-order' order.uuid %}">
+                                    <button class="buy-btn" id="buy-cart">Checkout</button>
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>No orders available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script>
+        toastr.options = {
+            preventDuplicates: true,
+            timeOut: 10000,
+            progressBar: true,
+        }
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}')
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block script %}{% endblock %}

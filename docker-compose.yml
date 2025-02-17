@@ -1,0 +1,64 @@
+version: '3.11'
+
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      context: .
+      dockerfile: deploy/nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+
+  server1:
+    container_name: server1
+    restart: always
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-k=x
+      - SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=x
+      - SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=x
+      - SOCIAL_AUTH_TWITTER_KEY=x
+      - SOCIAL_AUTH_TWITTER_SECRET=x
+      - S3_ACCESS_KEY=x
+      - S3_SECRET_KEY=x
+      - S3_STORAGE_BUCKET_NAME=x
+      - S3_REGION=x
+      - DB_NAME=x
+      - DB_USER=postgres
+      - DB_PASSWORD=x
+      - DB_HOST=db
+      - DB_PORT=5432
+    build:
+      context: .
+      dockerfile: ./deploy/backend/Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=fanpost2024
+      - POSTGRES_DB=fanpost
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  nginx-conf:
+  postgres_data:
+
+
+
+
+
+

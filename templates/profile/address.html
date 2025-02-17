@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper bg-white mt-sm-5">
+        <h4 class="pb-4 border-bottom">Account settings</h4>
+        <div class="link-settings">
+            <a class="active" href="{% url "profile-address" %}">Address</a>
+        </div>
+
+        <div class="wrapper2 bg-white mt-sm-3">
+            <form id="address-form" method="post" class="" action="{% url 'profile-address' %}">
+                {% csrf_token %}
+                <div class="py-2">
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="{{ form.location.id_for_label }}">Search for your address</label>
+                            {{ form.location }}
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}">First Name <span
+                                    class="text-danger">*</span></label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 pt-md-0 pt-3">
+                            <label for="{{ form.last_name.id_for_label }}">Last Name <span
+                                    class="text-danger">*</span></label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="{{ form.address_line_1.id_for_label }}">Address Line 1 <span
+                                    class="text-danger">*</span></label>
+                            {{ form.address_line_1 }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.address_line_2.id_for_label }}">Address Line 2 </label>
+                            {{ form.address_line_2 }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.country.id_for_label }}">Country <span
+                                    class="text-danger">*</span></label>
+                            {{ form.country }}
+                        </div>
+                    </div>
+                    <div class="row py-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.city.id_for_label }}">City <span class="text-danger">*</span></label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.state.id_for_label }}">State / Province <span
+                                    class="text-danger">*</span></label>
+                            {{ form.state }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.zipcode.id_for_label }}">ZIP/ Postal Code <span
+                                    class="text-danger">*</span></label>
+                            {{ form.zipcode }}
+                        </div>
+                    </div>
+                    <div class="row py-1">
+                        <div class="col-md-6">
+                            <label for="{{ form.phone_number.id_for_label }}">Phone Number <span
+                                    class="text-danger">*</span></label>
+                            {{ form.phone_number }}
+                        </div>
+                        <div class="col-md-6 pt-md-0 pt-3">
+                            <label for="{{ form.description.id_for_label }}">Additional Delivery
+                                Instructions</label>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                    <div class="py-3 pb-4 border-bottom">
+                        <button class="btn btn-primary mr-3">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function initAutoPlaces() {
+            const input = document.getElementById('{{ form.location.id_for_label }}');
+            const inputAddresLine1 = document.getElementById('{{ form.address_line_1.id_for_label }}')
+            const inputCountry = document.getElementById('{{ form.country.id_for_label }}')
+            const inputCity = document.getElementById('{{ form.city.id_for_label }}')
+            const inputState = document.getElementById('{{ form.state.id_for_label }}')
+            const inputZipCode = document.getElementById('{{ form.zipcode.id_for_label }}')
+            const flagImage = document.getElementById('flag_id_country');
+            const options = {
+                types: ['address'],
+                //componentRestrictions: {country: 'us'} // Limit result to specific county
+            };
+
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                let street = "";
+                let country = "";
+                let city = "";
+                let state = "";
+                let postal_code = "";
+                place.address_components.forEach(component => {
+                    const types = component.types
+
+                    if (types.includes('street_address') || types.includes('route')) {
+                        street = component.long_name;
+                    } else if (types.includes('country')) {
+                        country = component.long_name;
+                    } else if (types.includes('locality')) {
+                        city = component.long_name;
+                    } else if (types.includes('administrative_area_level_1')) {
+                        state = component.long_name;
+                    } else if (types.includes('postal_code')) {
+                        postal_code = component.long_name;
+                    }
+                })
+
+                inputAddresLine1.value = street
+                inputCity.value = city
+                inputState.value = state
+                inputZipCode.value = postal_code
+                const countryOptions = Array.from(inputCountry.options);
+                const countryOption = countryOptions.find(option => option.textContent.toLowerCase().includes(country.toLowerCase()));
+
+                if (countryOption) {
+                    inputCountry.value = countryOption.value;
+                    updateFlag(countryOption.value);
+                }
+                inputCountry.addEventListener('change', function () {
+                    updateFlag(this.value);
+                });
+
+                function updateFlag(countryCode) {
+                    const flagPath = `/static/flags/${countryCode.toLowerCase()}.gif`;
+                    flagImage.src = flagPath;
+                }
+
+            });
+        }
+
+        initAutoPlaces()
+
+    </script>
+    <script>
+        toastr.options = {
+            preventDuplicates: true,
+            timeOut: 6000,
+            progressBar: true,
+        }
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.info('{{ message }}')
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}
+
+
